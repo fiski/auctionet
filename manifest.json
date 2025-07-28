@@ -1,0 +1,21 @@
+{
+    "manifest_version": 3,
+    "name": "Auctionet Distance Calculator",
+    "version": "1.0",
+    "description": "Shows distance to auction houses on auctionet.com",
+    "permissions": [
+      "activeTab",
+      "geolocation"
+    ],
+    "host_permissions": [
+      "*://auctionet.com/*"
+    ],
+    "content_scripts": [
+      {
+        "matches": ["*://auctionet.com/*"],
+        "js": ["content.js"],
+        "css": ["styles.css"]
+      }
+    ]
+  }
+  

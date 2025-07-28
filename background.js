@@ -1,5 +1,5 @@
 chrome.runtime.onInstalled.addListener(() => {
-    console.log('Auctionet Distance Calculator installed');
+    console.log('Auctionet Distance Calculator installerat');
   });
   
   chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
@@ -7,18 +7,27 @@ chrome.runtime.onInstalled.addListener(() => {
       try {
         const response = await fetch(message.url);
         const html = await response.text();
-        
-        // DOMParser fungerar inte i background service workers – vi använder istället regex som workaround
-        const match = html.match(/<dt[^>]*>\s*Adress\s*<\/dt>\s*<dd[^>]*>(.*?)<\/dd>/i);
-        const address = match ? match[1].trim() : null;
   
-        sendResponse({ address });
+        // Plocka ut adressblock (p + br-taggar) ur <dd> för "Adress"
+        const match = html.match(/<dt>\s*Adress\s*<\/dt>\s*<dd>\s*<p>([\s\S]*?)<\/p>/i);
+        if (!match) {
+          sendResponse({ address: null });
+          return;
+        }
+  
+        // Rensa HTML till text
+        const raw = match[1]
+          .replace(/<br\s*\/?>/gi, '\n')   // ersätt <br> med radbrytning
+          .replace(/<\/?[^>]+(>|$)/g, '') // ta bort övriga taggar
+          .trim();
+  
+        sendResponse({ address: raw });
       } catch (e) {
-        console.error('Background fetch failed:', e);
+        console.error('Fel vid hämtning av objektsida:', e);
         sendResponse({ address: null });
       }
   
-      return true; // Viktigt! Behåller meddelandekanalen öppen för async-respons
+      return true; // Håll kanalen öppen för async-svar
     }
   });
   

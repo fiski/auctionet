@@ -5,11 +5,16 @@
     "description": "Shows distance to auction houses on auctionet.com",
     "permissions": [
       "activeTab",
-      "geolocation"
+      "geolocation",
+      "scripting"
     ],
     "host_permissions": [
-      "*://auctionet.com/*"
+      "*://auctionet.com/*",
+      "https://api.openrouteservice.org/*"
     ],
+    "background": {
+      "service_worker": "background.js"
+    },
     "content_scripts": [
       {
         "matches": ["*://auctionet.com/*"],

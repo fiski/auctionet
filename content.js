@@ -1,6 +1,6 @@
 let userLocation = null;
 
-// Get user's location
+// Steg 1: Hämta användarens plats
 navigator.geolocation.getCurrentPosition(
   (position) => {
     userLocation = {
@@ -10,86 +10,78 @@ navigator.geolocation.getCurrentPosition(
     addDistanceToItems();
   },
   (error) => {
-    console.log('Location access denied');
+    console.warn('Platsåtkomst nekad:', error.message);
   }
 );
 
+// Steg 2: Lägg till distansinfo till varje auktionsobjekt
 function addDistanceToItems() {
   if (!userLocation) return;
 
   const items = document.querySelectorAll('.item-thumb');
-  
+
   items.forEach(async (item) => {
     const amountDiv = item.querySelector('.item-thumb__amount');
     if (!amountDiv) return;
 
-    // Check if distance already added
+    // Undvik att lägga till info flera gånger
     if (item.querySelector('.distance-info')) return;
 
     const link = item.querySelector('a[href*="/sv/"]');
     if (!link) return;
 
     const itemUrl = link.href;
-    
+
     try {
       const address = await getItemAddress(itemUrl);
       if (address) {
         const distance = await calculateDistance(userLocation, address);
-        
-        // Create distance element
+
+        // Skapa visuell div med avstånd
         const distanceDiv = document.createElement('div');
         distanceDiv.className = 'distance-info';
         distanceDiv.innerHTML = `📍 ${distance} km`;
-        
-        // Insert after amount div
+
         amountDiv.parentNode.insertBefore(distanceDiv, amountDiv.nextSibling);
       }
     } catch (error) {
-      console.log('Error getting distance for item:', error);
+      console.error('Fel vid distansberäkning:', error);
     }
   });
 }
 
-async function getItemAddress(itemUrl) {
-  try {
-    const response = await fetch(itemUrl);
-    const html = await response.text();
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, 'text/html');
-    
-    const addressElements = doc.querySelectorAll('dt');
-    for (let dt of addressElements) {
-      if (dt.textContent.trim() === 'Adress') {
-        const dd = dt.nextElementSibling;
-        if (dd && dd.tagName === 'DD') {
-          return dd.textContent.trim();
-        }
+// Steg 3: Hämta adressen via background-script
+function getItemAddress(itemUrl) {
+  return new Promise((resolve, reject) => {
+    chrome.runtime.sendMessage({ type: 'fetchItemPage', url: itemUrl }, (response) => {
+      if (chrome.runtime.lastError) {
+        console.error('Meddelande till background.js misslyckades:', chrome.runtime.lastError);
+        reject(chrome.runtime.lastError);
+        return;
       }
-    }
-    return null;
-  } catch (error) {
-    console.log('Error fetching item page:', error);
-    return null;
-  }
+      resolve(response.address);
+    });
+  });
 }
 
+// Steg 4: Använd OpenRouteService för att beräkna körsträcka
 async function calculateDistance(from, address) {
   try {
-    // First geocode the address
+    // Steg 4a: Geokoda adressen
     const geocodeUrl = `https://api.openrouteservice.org/geocode/search?api_key=eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjZmMDdlOTg4ZWRmMTRiZGNhMzkzMDVlZWQ4Nzg4NWM2IiwiaCI6Im11cm11cjY0In0==&text=${encodeURIComponent(address)}`;
     const geocodeResponse = await fetch(geocodeUrl);
     const geocodeData = await geocodeResponse.json();
-    
+
     if (!geocodeData.features || geocodeData.features.length === 0) {
-      return 'Unknown';
+      return 'Okänd';
     }
-    
+
     const to = {
       lng: geocodeData.features[0].geometry.coordinates[0],
       lat: geocodeData.features[0].geometry.coordinates[1]
     };
-    
-    // Calculate driving distance
+
+    // Steg 4b: Beräkna körväg
     const routeUrl = 'https://api.openrouteservice.org/v2/directions/driving-car';
     const routeResponse = await fetch(routeUrl, {
       method: 'POST',
@@ -101,12 +93,13 @@ async function calculateDistance(from, address) {
         coordinates: [[from.lng, from.lat], [to.lng, to.lat]]
       })
     });
-    
+
     const routeData = await routeResponse.json();
     const distanceKm = Math.round(routeData.routes[0].summary.distance / 1000);
-    
+
     return distanceKm;
   } catch (error) {
-    console.log('Error calculating distance:', error);
-    return 'Unknown';
+    console.error('Fel vid distansberäkning:', error);
+    return 'Okänd';
   }
+}

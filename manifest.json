@@ -1,26 +1,24 @@
 {
-    "manifest_version": 3,
-    "name": "Auctionet Distance Calculator",
-    "version": "1.0",
-    "description": "Shows distance to auction houses on auctionet.com",
-    "permissions": [
-      "activeTab",
-      "geolocation",
-      "scripting"
-    ],
-    "host_permissions": [
-      "*://auctionet.com/*",
-      "https://api.openrouteservice.org/*"
-    ],
-    "background": {
-      "service_worker": "background.js"
-    },
-    "content_scripts": [
-      {
-        "matches": ["*://auctionet.com/*"],
-        "js": ["content.js"],
-        "css": ["styles.css"]
-      }
-    ]
-  }
-  
+  "manifest_version": 3,
+  "name": "Auctionet Distance Calculator",
+  "version": "1.0",
+  "description": "Shows distance to auction houses on auctionet.com",
+  "permissions": [
+    "activeTab",
+    "geolocation",
+    "scripting"
+  ],
+  "host_permissions": [
+    "*://auctionet.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://auctionet.com/*"],
+      "js": ["content.js"],
+      "css": ["styles.css"]
+    }
+  ]
+}

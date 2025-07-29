@@ -5,3 +5,13 @@
     font-weight: normal;
   }
   
+  .distance-info {
+    font-size: 13px;
+    color: #2b5c2b;
+    margin-top: 4px;
+    font-weight: 500;
+    background-color: #eafae9;
+    padding: 2px 6px;
+    border-radius: 4px;
+    display: inline-block;
+  }

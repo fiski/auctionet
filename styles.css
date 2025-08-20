@@ -1,17 +1,33 @@
-.distance-info {
-    font-size: 12px;
-    color: #666;
-    margin-top: 4px;
-    font-weight: normal;
-  }
-  
-  .distance-info {
-    font-size: 13px;
-    color: #2b5c2b;
-    margin-top: 4px;
-    font-weight: 500;
-    background-color: #eafae9;
-    padding: 2px 6px;
-    border-radius: 4px;
-    display: inline-block;
-  }
+/* Stilar för Auctionet-sidan */
+.distance-info.green {
+  font-size: 13px !important;
+  color: #1a3c1a !important; /* Mörkgrön text */
+  background-color: #d4f0d3 !important; /* Grön bakgrund */
+  margin-top: 4px !important;
+  font-weight: 500 !important;
+  padding: 2px 6px !important;
+  border-radius: 4px !important;
+  display: inline-block !important;
+}
+
+.distance-info.orange {
+  font-size: 13px !important;
+  color: #8a4500 !important; /* Mörkorange text */
+  background-color: #ffe0b2 !important; /* Orange bakgrund */
+  margin-top: 4px !important;
+  font-weight: 500 !important;
+  padding: 2px 6px !important;
+  border-radius: 4px !important;
+  display: inline-block !important;
+}
+
+.distance-info.red {
+  font-size: 13px !important;
+  color: #7a1c1c !important; /* Mörkröd text */
+  background-color: #f4cccc !important; /* Röd bakgrund */
+  margin-top: 4px !important;
+  font-weight: 500 !important;
+  padding: 2px 6px !important;
+  border-radius: 4px !important;
+  display: inline-block !important;
+}

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Auctionet Avstånd - Inställningar</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      width: 320px;
+      padding: 20px;
+      margin: 0;
+      background-color: #f9f9f9;
+    }
+    h3 {
+      margin: 0 0 16px;
+      color: #2b5c2b;
+      font-size: 16px;
+    }
+    label {
+      display: block;
+      margin: 16px 0 8px;
+      font-size: 14px;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    button {
+      padding: 8px 16px;
+      margin: 16px 8px 0 0;
+      background-color: #2b5c2b;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    button:hover {
+      background-color: #1a3c1a;
+    }
+    .location-section, .current-location {
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid #ccc;
+    }
+    .current-location p {
+      margin: 8px 0;
+      font-size: 14px;
+      color: #333;
+    }
+    .error-message {
+      color: #d32f2f;
+      font-size: 12px;
+      margin: 8px 0 0;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h3>Inställningar för avstånd</h3>
+  <label>Grön max (km): <input type="number" id="greenMax" min="0" value="100"></label>
+  <label>Orange max (km): <input type="number" id="orangeMax" min="0" value="250"></label>
+  <button id="saveButton">Spara</button>
+  <button id="resetButton">Återställ</button>
+
+  <div class="location-section">
+    <h3>Platsinställningar</h3>
+    <label>Välj stad: 
+      <select id="citySelect">
+        <option value="">Välj en stad...</option>
+        <option value="57.7,11.9">Göteborg</option>
+        <option value="59.3293,18.0686">Stockholm</option>
+        <option value="55.6050,13.0038">Malmö</option>
+        <option value="59.8586,17.6389">Uppsala</option>
+        <option value="63.8258,20.2630">Umeå</option>
+        <option value="55.7047,13.1910">Lund</option>
+        <option value="56.6634,16.3568">Kalmar</option>
+        <option value="56.6745,12.8578">Halmstad</option>
+      </select>
+    </label>
+    <label>Latitud: <input type="number" id="manualLat" placeholder="t.ex. 57.7" step="0.000001"></label>
+    <label>Longitud: <input type="number" id="manualLng" placeholder="t.ex. 11.9" step="0.000001"></label>
+    <button id="saveManualButton">Spara manuell plats</button>
+    <button id="retryButton">Försök hämta plats igen</button>
+  </div>
+
+  <div class="current-location">
+    <h3>Nuvarande plats</h3>
+    <p id="currentLocation">Hämtar plats...</p>
+    <p id="errorMessage" class="error-message"></p>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

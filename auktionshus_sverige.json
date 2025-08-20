@@ -1,0 +1,272 @@
+{
+  "Auktionsfirma Kenneth Svensson i Kalmar": {
+    "address": "Storgatan 5, 392 32 Kalmar, Sverige",
+    "lat": 56.663444,
+    "lng": 16.356779
+  },
+  "Auktionshuset Kolonn": {
+    "address": "Slakthusgatan 22, 121 62 Johanneshov, Sverige",
+    "lat": 59.291962,
+    "lng": 18.080351
+  },
+  "Auktionshuset STO Bohuslän": {
+    "address": "Lerbergsleden 1, 451 75 Uddevalla, Sverige",
+    "lat": 58.347485,
+    "lng": 11.942222
+  },
+  "Auktionshuset Thelin & Johansson": {
+    "address": "Esplanaden 17, 392 34 Kalmar, Sverige",
+    "lat": 56.662647,
+    "lng": 16.361071
+  },
+  "Auktionshuset Thörner & Ek": {
+    "address": "Lilla Brogatan 19, 503 35 Borås, Sverige",
+    "lat": 57.720122,
+    "lng": 12.940238
+  },
+  "Auktionskammaren Sydost Kalmar": {
+    "address": "Polhemsgatan 1, 392 39 Kalmar, Sverige",
+    "lat": 56.662208,
+    "lng": 16.338949
+  },
+  "Auktionsmagasinet Vänersborg": {
+    "address": "Edsgatan 15, 462 33 Vänersborg, Sverige",
+    "lat": 58.379337,
+    "lng": 12.325159
+  },
+  "Auktionsverket Engelholm": {
+    "address": "Luntertunsgatan 3, 262 63 Ängelholm, Sverige",
+    "lat": 56.240893,
+    "lng": 12.857343
+  },
+  "Björnssons Auktionskammare": {
+    "address": "Norra Vallgatan 100, 211 22 Malmö, Sverige",
+    "lat": 55.610742,
+    "lng": 12.994753
+  },
+  "Borås Auktionshall": {
+    "address": "Göteborgsvägen 191, 504 63 Borås, Sverige",
+    "lat": 57.733639,
+    "lng": 12.922945
+  },
+  "Connoisseur Bokauktioner": {
+    "address": "Riddargatan 14, 114 35 Stockholm, Sverige",
+    "lat": 59.334295,
+    "lng": 18.084781
+  },
+  "Crafoord Auktioner Lund": {
+    "address": "Skiffervägen 102, 224 78 Lund, Sverige",
+    "lat": 55.713268,
+    "lng": 13.183038
+  },
+  "Crafoord Auktioner Malmö": {
+    "address": "Borrgatan 3, 211 24 Malmö, Sverige",
+    "lat": 55.602674,
+    "lng": 13.032973
+  },
+  "Crafoord Auktioner Stockholm": {
+    "address": "Fannys väg 3, 131 54 Nacka, Sverige",
+    "lat": 59.305884,
+    "lng": 18.122166
+  },
+  "Ekenbergs": {
+    "address": "Bergslagsvägen 9, 168 76 Bromma, Sverige",
+    "lat": 59.337171,
+    "lng": 17.955099
+  },
+  "Formstad Auktioner": {
+    "address": "Ulvsundavägen 185E, 168 67 Bromma, Sverige",
+    "lat": 59.351806,
+    "lng": 17.946431
+  },
+  "Garpenhus Auktioner": {
+    "address": "Södra Bulltoftavägen 51, 212 22 Malmö, Sverige",
+    "lat": 55.597502,
+    "lng": 13.039338
+  },
+  "Gomér & Andersson Jönköping": {
+    "address": "Solåsvägen 22C, 553 03 Jönköping, Sverige",
+    "lat": 57.757643,
+    "lng": 14.151671
+  },
+  "Gomér & Andersson Linköping": {
+    "address": "Roxtorpsgatan 14, 582 73 Linköping, Sverige",
+    "lat": 58.398858,
+    "lng": 15.589303
+  },
+  "Gomér & Andersson Norrköping": {
+    "address": "Ståthögavägen 48, 602 23 Norrköping, Sverige",
+    "lat": 58.577634,
+    "lng": 16.184099
+  },
+  "Gomér & Andersson Nyköping": {
+    "address": "Västra Kvarngatan 62, 611 31 Nyköping, Sverige",
+    "lat": 58.751348,
+    "lng": 17.008178
+  },
+  "Göteborgs Auktionsverk": {
+    "address": "Banehagsgatan 20, 414 51 Göteborg, Sverige",
+    "lat": 57.7065,
+    "lng": 11.9503
+  },
+  "Halmstads Auktionskammare": {
+    "address": "Verkstadsgatan 2, 302 60 Halmstad, Sverige",
+    "lat": 56.669865,
+    "lng": 12.836171
+  },
+  "Handelslagret Auktionsservice": {
+    "address": "Västerled 2, 811 37 Sandviken, Sverige",
+    "lat": 60.627725,
+    "lng": 16.790937
+  },
+  "Helsingborgs Auktionskammare": {
+    "address": "Företagsgatan 2, 254 74 Ödåkra, Sverige",
+    "lat": 56.096307,
+    "lng": 12.793739
+  },
+  "Hälsinglands Auktionsverk": {
+    "address": "Rönningevägen 4a, 824 34 Hudiksvall, Sverige",
+    "lat": 61.731464,
+    "lng": 17.069458
+  },
+  "Höganäs Auktionsverk": {
+    "address": "Verkstadsgatan 11, 263 39 Höganäs, Sverige",
+    "lat": 56.208172,
+    "lng": 12.565809
+  },
+  "Höörs Auktionshall": {
+    "address": "Handelsgatan 3, 243 30 Höör, Sverige",
+    "lat": 55.93297,
+    "lng": 13.551711
+  },
+  "Kalmar Auktionsverk": {
+    "address": "Polhemsgatan 28, 392 39 Kalmar, Sverige",
+    "lat": 56.666324,
+    "lng": 16.335342
+  },
+  "Karlstad Hammarö Auktionsverk": {
+    "address": "Pråmvägen 13, 652 16 Karlstad, Sverige",
+    "lat": 59.380489,
+    "lng": 13.486242
+  },
+  "Laholms Auktionskammare": {
+    "address": "Vallbergagården, 312 50 Vallberga, Sverige",
+    "lat": 56.495048,
+    "lng": 13.064506
+  },
+  "Limhamns Auktionsbyrå": {
+    "address": "Torupsgatan 2, 217 73 Malmö, Sverige",
+    "lat": 55.578635,
+    "lng": 12.969185
+  },
+  "Lysekils Auktionsbyrå": {
+    "address": "Kontorsvägen 8, 453 38 Lysekil, Sverige",
+    "lat": 58.271387,
+    "lng": 11.432612
+  },
+  "Markus Auktioner": {
+    "address": "Lastvägen 3, 231 62 Trelleborg, Sverige",
+    "lat": 55.378905,
+    "lng": 13.136531
+  },
+  "Mauritz Widforss": {
+    "address": "Cederströms Slinga 1, 195 61 Arlandastad, Sverige",
+    "lat": 59.620063,
+    "lng": 17.915781
+  },
+  "Norrlands Auktionsverk": {
+    "address": "Formvägen 3, 906 21 Umeå, Sverige",
+    "lat": 63.829147,
+    "lng": 20.264426
+  },
+  "RA Auktionsverket Norrköping": {
+    "address": "Malmgatan 5, 602 23 Norrköping, Sverige",
+    "lat": 58.583305,
+    "lng": 16.185672
+  },
+  "Roslagens Auktionsverk": {
+    "address": "Stockholmsvägen 53 A, 761 43 Norrtälje, Sverige",
+    "lat": 59.757041,
+    "lng": 18.705177
+  },
+  "Sajab Vintage": {
+    "address": "Hästhovsvägen 3, 585 64 Linghem, Sverige",
+    "lat": 58.468231,
+    "lng": 15.823653
+  },
+  "Skånes Auktionsverk": {
+    "address": "Enoch Thulins väg 13, 261 53 Landskrona, Sverige",
+    "lat": 55.888764,
+    "lng": 12.871887
+  },
+  "Stadsauktion Sundsvall": {
+    "address": "Verkstadsgatan 4, 856 33 Sundsvall, Sverige",
+    "lat": 62.395123,
+    "lng": 17.348639
+  },
+  "Stockholms Auktionsverk Fine Art": {
+    "address": "Nybrogatan 32, 114 39 Stockholm, Sverige",
+    "lat": 59.336442,
+    "lng": 18.07767
+  },
+  "Stockholms Auktionsverk Göteborg": {
+    "address": "Geijersgatan 14, 411 34 Göteborg, Sverige",
+    "lat": 57.708899,
+    "lng": 11.975417
+  },
+  "Stockholms Auktionsverk Helsingborg": {
+    "address": "Garnisonsgatan 16, 254 66 Helsingborg, Sverige",
+    "lat": 56.049448,
+    "lng": 12.709974
+  },
+  "Stockholms Auktionsverk Magasin 5": {
+    "address": "Palermogatan 17, 115 56 Stockholm, Sverige",
+    "lat": 59.347526,
+    "lng": 18.11894
+  },
+  "Stockholms Auktionsverk Malmö": {
+    "address": "Drottninggatan 36, 211 41 Malmö, Sverige",
+    "lat": 55.602674,
+    "lng": 13.032973
+  },
+  "Stockholms Auktionsverk Sickla": {
+    "address": "Järnvägsgatan 35, 131 54 Nacka, Sverige",
+    "lat": 59.309062,
+    "lng": 18.125605
+  },
+  "Södermanlands Auktionsverk": {
+    "address": "Hållsta, 641 61 Valla, Sverige",
+    "lat": 59.049388,
+    "lng": 16.598263
+  },
+  "TOKA Auktionshus": {
+    "address": "Geijersgatan 14, 411 34 Göteborg, Sverige",
+    "lat": 57.708899,
+    "lng": 11.975417
+  },
+  "Tisas": {
+    "address": "Verkstadsgatan 2, 302 60 Halmstad, Sverige",
+    "lat": 56.669865,
+    "lng": 12.836171
+  },
+  "Varbergs Auktionskammare": {
+    "address": "Vagnvägen 16B, 432 32 Varberg, Sverige",
+    "lat": 57.104445,
+    "lng": 12.261883
+  },
+  "Växjö Auktionskammare": {
+    "address": "Hjalmar Petris väg 46, 352 46 Växjö, Sverige",
+    "lat": 56.883726,
+    "lng": 14.801642
+  },
+  "Walter Borg": {
+    "address": "Kungsgatan 57B, 111 22 Stockholm, Sverige",
+    "lat": 59.337187,
+    "lng": 18.062828
+  },
+  "Örebro Stadsauktioner": {
+    "address": "Köping-Hultgatan 2, 703 63 Örebro, Sverige",
+    "lat": 59.261645,
+    "lng": 15.197931
+  }
+}

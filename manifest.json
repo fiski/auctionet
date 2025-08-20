@@ -1,24 +1,32 @@
 {
+  "name": "Auctionet Avstånd",
+  "version": "1.4",
   "manifest_version": 3,
-  "name": "Auctionet Distance Calculator",
-  "version": "1.0",
-  "description": "Shows distance to auction houses on auctionet.com",
+  "description": "Visa avstånd till auktionshus",
   "permissions": [
-    "activeTab",
     "geolocation",
-    "scripting"
+    "scripting",
+    "tabs",
+    "storage"
   ],
-  "host_permissions": [
-    "*://auctionet.com/*"
-  ],
+  "action": {
+    "default_popup": "popup.html"
+  },
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "background.js",
+    "type": "module"
   },
   "content_scripts": [
     {
-      "matches": ["*://auctionet.com/*"],
+      "matches": ["https://auctionet.com/*"],
       "js": ["content.js"],
       "css": ["styles.css"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["auktionshus_sverige.json"],
+      "matches": ["<all_urls>"]
     }
   ]
 }

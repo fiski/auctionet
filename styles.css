@@ -8,6 +8,9 @@
   padding: 2px 6px !important;
   border-radius: 4px !important;
   display: inline-block !important;
+  line-height: 18px !important; /* Säkerställer enhetlig texthöjd */
+  min-height: 40px !important; /* Säkerställer enhetlig elementhöjd */
+  min-width: 100% !important; /* Tar upp hela förälderelementets bredd */
 }
 
 .distance-info.orange {
@@ -19,6 +22,9 @@
   padding: 2px 6px !important;
   border-radius: 4px !important;
   display: inline-block !important;
+  line-height: 18px !important; /* Säkerställer enunitlig texthöjd */
+  min-height: 40px !important; /* Säkerställer enhetlig elementhöjd */
+  min-width: 100% !important; /* Tar upp hela förälderelementets bredd */
 }
 
 .distance-info.red {
@@ -30,4 +36,28 @@
   padding: 2px 6px !important;
   border-radius: 4px !important;
   display: inline-block !important;
+  line-height: 18px !important; /* Säkerställer enunitlig texthöjd */
+  min-height: 40px !important; /* Säkerställer enhetlig elementhöjd */
+  min-width: 100% !important; /* Tar upp hela förälderelementets bredd */
+}
+
+.distance-info.non-sweden {
+  font-size: 13px !important;
+  color: #5C4033 !important; /* Mörkbrun text för bättre läsbarhet */
+  background-color: #F5E8C7 !important; /* Ljusbrun bakgrund */
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 5px,
+    rgba(92, 64, 51, 0.089) 5px,
+    rgba(92, 64, 51, 0.089) 10px
+  ) !important; /* Subtila mörkbruna diagonala streck */
+  margin-top: 4px !important;
+  font-weight: 500 !important;
+  padding: 2px 6px !important;
+  border-radius: 4px !important;
+  display: inline-block !important;
+  line-height: 18px !important; /* Säkerställer enunitlig texthöjd */
+  min-height: 40px !important; /* Säkerställer enhetlig elementhöjd */
+  min-width: 100% !important; /* Tar upp hela förälderelementets bredd */
 }

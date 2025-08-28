@@ -7,7 +7,7 @@
     body {
       font-family: Arial, sans-serif;
       width: 320px;
-      padding: 20px;
+      padding: 24px;
       margin: 0;
       background-color: #f9f9f9;
     }
@@ -32,7 +32,7 @@
     button {
       padding: 8px 16px;
       margin: 16px 8px 0 0;
-      background-color: #2b5c2b;
+      background-color: #0e0e10;
       color: #fff;
       border: none;
       border-radius: 4px;
@@ -40,20 +40,40 @@
       font-size: 14px;
     }
     button:hover {
-      background-color: #1a3c1a;
+      background-color: #383a38;
+    }
+    .text-button {
+      background: none;
+      color: #2b5c2b;
+      border: none;
+      padding: 8px 16px;
+      margin: 16px 8px 0 0;
+      font-size: 14px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .text-button:hover {
+      color: #ffffff; /* Vit text vid hover */
+      text-decoration: underline;
     }
     .location-section, .current-location {
       margin-top: 24px;
       padding-top: 16px;
       border-top: 1px solid #ccc;
     }
-    .current-location p {
+    .current-location p, .location-section p {
       margin: 8px 0;
       font-size: 14px;
       color: #333;
     }
     .error-message {
       color: #d32f2f;
+      font-size: 12px;
+      margin: 8px 0 0;
+      display: none;
+    }
+    .confirmation-message {
+      color: #2b5c2b;
       font-size: 12px;
       margin: 8px 0 0;
       display: none;
@@ -65,7 +85,7 @@
   <label>Grön max (km): <input type="number" id="greenMax" min="0" value="100"></label>
   <label>Orange max (km): <input type="number" id="orangeMax" min="0" value="250"></label>
   <button id="saveButton">Spara</button>
-  <button id="resetButton">Återställ</button>
+  <button id="resetButton" class="text-button">Återställ</button>
 
   <div class="location-section">
     <h3>Platsinställningar</h3>
@@ -80,12 +100,14 @@
         <option value="55.7047,13.1910">Lund</option>
         <option value="56.6634,16.3568">Kalmar</option>
         <option value="56.6745,12.8578">Halmstad</option>
+        <option value="62.3908,17.3069">Sundsvall</option>
       </select>
     </label>
-    <label>Latitud: <input type="number" id="manualLat" placeholder="t.ex. 57.7" step="0.000001"></label>
-    <label>Longitud: <input type="number" id="manualLng" placeholder="t.ex. 11.9" step="0.000001"></label>
+    <label>Latitud: <input type="number" id="manualLat" placeholder="t.ex. 57.7" step="any"></label>
+    <label>Longitud: <input type="number" id="manualLng" placeholder="t.ex. 11.9" step="any"></label>
     <button id="saveManualButton">Spara manuell plats</button>
-    <button id="retryButton">Försök hämta plats igen</button>
+    <button id="fetchGeoButton">Hämta plats automatiskt</button>
+    <p id="confirmationMessage" class="confirmation-message"></p>
   </div>
 
   <div class="current-location">

@@ -3,58 +3,88 @@ const defaultRanges = {
   orangeMax: 250
 };
 
-function updateCurrentLocation() {
+const cities = {
+  "Göteborg": { lat: 57.7, lng: 11.9 },
+  "Stockholm": { lat: 59.3293, lng: 18.0686 },
+  "Malmö": { lat: 55.6050, lng: 13.0038 },
+  "Uppsala": { lat: 59.8586, lng: 17.6389 },
+  "Umeå": { lat: 63.8258, lng: 20.2630 },
+  "Lund": { lat: 55.7047, lng: 13.1910 },
+  "Kalmar": { lat: 56.6634, lng: 16.3568 },
+  "Halmstad": { lat: 56.6745, lng: 12.8578 },
+  "Sundsvall": { lat: 62.3908, lng: 17.3069 }
+};
+
+async function updateCurrentLocation() {
   const currentLocation = document.getElementById('currentLocation');
   const errorMessage = document.getElementById('errorMessage');
+  const confirmationMessage = document.getElementById('confirmationMessage');
+  const citySelect = document.getElementById('citySelect');
   currentLocation.textContent = 'Hämtar plats...';
   errorMessage.style.display = 'none';
+  confirmationMessage.style.display = 'none';
 
-  if (!navigator.geolocation) {
-    console.warn('🚫 Geolocation stöds inte av webbläsaren');
+  return new Promise((resolve) => {
     chrome.storage.sync.get(['manualLocation'], (result) => {
-      if (result.manualLocation && result.manualLocation.lat && result.manualLocation.lng) {
-        console.log('📍 Hittade manuell plats:', result.manualLocation);
-        currentLocation.textContent = `Latitud: ${result.manualLocation.lat.toFixed(4)}, Longitud: ${result.manualLocation.lng.toFixed(4)} (manuell)`;
+      console.log('🔍 Hämtar manuell plats...');
+      console.log('📍 Hittade manuell plats:', result.manualLocation);
+      if (result.manualLocation && !isNaN(result.manualLocation.lat) && !isNaN(result.manualLocation.lng)) {
+        const lat = result.manualLocation.lat;
+        const lng = result.manualLocation.lng;
+        currentLocation.textContent = `Latitud: ${lat.toFixed(4)}, Longitud: ${lng.toFixed(4)} (manuell)`;
+        // Update dropdown to reflect manual location
+        let selectedCity = '';
+        for (const [city, coords] of Object.entries(cities)) {
+          if (Math.abs(coords.lat - lat) < 0.0001 && Math.abs(coords.lng - lng) < 0.0001) {
+            selectedCity = `${coords.lat},${coords.lng}`;
+            console.log(`🏙️ Matchade stad: ${city} (${selectedCity})`);
+            break;
+          }
+        }
+        console.log(`🏙️ Sätter dropdown till: ${selectedCity || 'ingen match'}`);
+        citySelect.value = selectedCity || '';
+        console.log(`✅ Dropdown-värde efter updateCurrentLocation: ${citySelect.value}`);
+        resolve(result.manualLocation);
+      } else if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            const lat = pos.coords.latitude.toFixed(4);
+            const lng = pos.coords.longitude.toFixed(4);
+            console.log('📍 Geolocation lyckades:', { lat, lng });
+            currentLocation.textContent = `Latitud: ${lat}, Longitud: ${lng} (via geolocation)`;
+            chrome.storage.sync.set({ manualLocation: null }, () => {
+              console.log('🗑️ Raderade manuell plats vid lyckad geolocation');
+            });
+            citySelect.value = '';
+            console.log('✅ Dropdown nollställd till: Välj en stad...');
+            resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+          },
+          (err) => {
+            console.warn('🚫 Geolocation misslyckades:', err.message);
+            currentLocation.textContent = 'Ingen plats vald';
+            errorMessage.textContent = 'Kunde inte hämta plats. Ange en manuell plats eller försök igen.';
+            errorMessage.style.display = 'block';
+            citySelect.value = '';
+            console.log('✅ Dropdown nollställd till: Välj en stad...');
+            resolve(null);
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 5000,
+            maximumAge: 60000
+          }
+        );
       } else {
-        console.log('❌ Ingen manuell plats sparad');
+        console.warn('🚫 Geolocation stöds inte av webbläsaren');
         currentLocation.textContent = 'Ingen plats vald';
         errorMessage.textContent = 'Geolocation stöds inte. Ange en manuell plats.';
         errorMessage.style.display = 'block';
+        citySelect.value = '';
+        console.log('✅ Dropdown nollställd till: Välj en stad...');
+        resolve(null);
       }
     });
-    return;
-  }
-
-  navigator.geolocation.getCurrentPosition(
-    (pos) => {
-      const lat = pos.coords.latitude.toFixed(4);
-      const lng = pos.coords.longitude.toFixed(4);
-      console.log('📍 Geolocation lyckades:', { lat, lng });
-      currentLocation.textContent = `Latitud: ${lat}, Longitud: ${lng} (via geolocation)`;
-      chrome.storage.sync.set({ manualLocation: null }, () => {
-        console.log('🗑️ Raderade manuell plats vid lyckad geolocation');
-      });
-    },
-    (err) => {
-      console.warn('🚫 Geolocation misslyckades:', err.message);
-      chrome.storage.sync.get(['manualLocation'], (result) => {
-        if (result.manualLocation && result.manualLocation.lat && result.manualLocation.lng) {
-          console.log('📍 Hittade manuell plats:', result.manualLocation);
-          currentLocation.textContent = `Latitud: ${result.manualLocation.lat.toFixed(4)}, Longitud: ${result.manualLocation.lng.toFixed(4)} (manuell)`;
-        } else {
-          console.log('❌ Ingen manuell plats sparad');
-          currentLocation.textContent = 'Ingen plats vald';
-          errorMessage.textContent = 'Kunde inte hämta plats. Ange en manuell plats eller försök igen.';
-          errorMessage.style.display = 'block';
-        }
-      });
-    },
-    {
-      enableHighAccuracy: true,
-      timeout: 5000,
-      maximumAge: 60000
-    }
-  );
+  });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -67,7 +97,23 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('manualLat').value = manualLocation.lat || '';
     document.getElementById('manualLng').value = manualLocation.lng || '';
 
-    console.log('📄 Popup laddad, hämtar nuvarande plats...');
+    // Set dropdown to matching city if manual location matches
+    const citySelect = document.getElementById('citySelect');
+    let selectedCity = '';
+    for (const [city, coords] of Object.entries(cities)) {
+      if (manualLocation.lat && Math.abs(coords.lat - manualLocation.lat) < 0.0001 && Math.abs(coords.lng - manualLocation.lng) < 0.0001) {
+        selectedCity = `${coords.lat},${coords.lng}`;
+        console.log(`🔄 Hittade matchande stad för manuell plats: ${city} (${selectedCity})`);
+        break;
+      }
+    }
+    console.log(`📄 Popup laddad, försöker sätta dropdown till: ${selectedCity || 'Välj en stad...'}`);
+    citySelect.value = selectedCity || '';
+    console.log(`✅ Dropdown-värde vid laddning: ${citySelect.value}`);
+    // Verify available options
+    const options = Array.from(citySelect.options).map(opt => ({ value: opt.value, text: opt.text }));
+    console.log('🔍 Tillgängliga dropdown-värden:', options);
+
     updateCurrentLocation();
   });
 
@@ -75,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('saveButton').addEventListener('click', saveSettings);
   document.getElementById('resetButton').addEventListener('click', resetSettings);
   document.getElementById('saveManualButton').addEventListener('click', saveManualLocation);
-  document.getElementById('retryButton').addEventListener('click', retryGeolocation);
+  document.getElementById('fetchGeoButton').addEventListener('click', fetchGeolocation);
 });
 
 function selectCity() {
@@ -95,80 +141,199 @@ function selectCity() {
 function saveSettings() {
   const greenMax = parseInt(document.getElementById('greenMax').value);
   const orangeMax = parseInt(document.getElementById('orangeMax').value);
+  const confirmationMessage = document.getElementById('confirmationMessage');
+  const errorMessage = document.getElementById('errorMessage');
+  confirmationMessage.style.display = 'none';
+  errorMessage.style.display = 'none';
+
   if (isNaN(greenMax) || isNaN(orangeMax) || greenMax < 0 || orangeMax <= greenMax) {
+    console.warn('🚫 Ogiltiga avståndsvärden:', { greenMax, orangeMax });
     alert('Ogiltiga värden! Grön max måste vara >= 0 och mindre än Orange max.');
+    errorMessage.textContent = 'Ogiltiga avståndsvärden.';
+    errorMessage.style.display = 'block';
     return;
   }
+
   chrome.storage.sync.set({ distanceRanges: { greenMax, orangeMax } }, () => {
     if (chrome.runtime.lastError) {
       console.error('❌ Fel vid sparande av avståndsintervall:', chrome.runtime.lastError.message);
+      errorMessage.textContent = 'Kunde inte spara inställningar. Försök igen.';
+      errorMessage.style.display = 'block';
     } else {
       console.log('💾 Avståndsintervall sparade:', { greenMax, orangeMax });
+      confirmationMessage.textContent = 'Inställningar sparade!';
+      confirmationMessage.style.display = 'block';
+      chrome.runtime.sendMessage({ type: 'updateRanges' }, (response) => {
+        if (chrome.runtime.lastError) {
+          console.error('❌ Fel vid skickande av updateRanges:', chrome.runtime.lastError.message);
+        } else {
+          console.log('✅ updateRanges skickat');
+        }
+      });
+      setTimeout(() => {
+        confirmationMessage.style.display = 'none';
+        window.close();
+      }, 2000);
     }
-    chrome.runtime.sendMessage({ type: 'updateRanges' }, (response) => {
-      if (chrome.runtime.lastError) {
-        console.error('❌ Fel vid skickande av updateRanges:', chrome.runtime.lastError.message);
-      } else {
-        console.log('✅ updateRanges skickat');
-      }
-    });
-    window.close();
   });
 }
 
 function resetSettings() {
+  const confirmationMessage = document.getElementById('confirmationMessage');
+  const errorMessage = document.getElementById('errorMessage');
+  confirmationMessage.style.display = 'none';
+  errorMessage.style.display = 'none';
+
   chrome.storage.sync.set({ distanceRanges: defaultRanges }, () => {
     if (chrome.runtime.lastError) {
       console.error('❌ Fel vid återställning av avståndsintervall:', chrome.runtime.lastError.message);
+      errorMessage.textContent = 'Kunde inte återställa inställningar. Försök igen.';
+      errorMessage.style.display = 'block';
     } else {
       console.log('💾 Återställde till default:', defaultRanges);
+      document.getElementById('greenMax').value = defaultRanges.greenMax;
+      document.getElementById('orangeMax').value = defaultRanges.orangeMax;
+      confirmationMessage.textContent = 'Inställningar återställda!';
+      confirmationMessage.style.display = 'block';
+      chrome.runtime.sendMessage({ type: 'updateRanges' }, (response) => {
+        if (chrome.runtime.lastError) {
+          console.error('❌ Fel vid skickande av updateRanges:', chrome.runtime.lastError.message);
+        } else {
+          console.log('✅ updateRanges skickat');
+        }
+      });
+      setTimeout(() => {
+        confirmationMessage.style.display = 'none';
+        window.close();
+      }, 2000);
     }
-    document.getElementById('greenMax').value = defaultRanges.greenMax;
-    document.getElementById('orangeMax').value = defaultRanges.orangeMax;
-    chrome.runtime.sendMessage({ type: 'updateRanges' }, (response) => {
-      if (chrome.runtime.lastError) {
-        console.error('❌ Fel vid skickande av updateRanges:', chrome.runtime.lastError.message);
-      } else {
-        console.log('✅ updateRanges skickat');
-      }
-    });
-    window.close();
   });
 }
 
 function saveManualLocation() {
   const lat = parseFloat(document.getElementById('manualLat').value);
   const lng = parseFloat(document.getElementById('manualLng').value);
-  if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
-    alert('Ogiltiga koordinater! Latitud måste vara mellan -90 och 90, longitud mellan -180 och 180.');
+  const confirmationMessage = document.getElementById('confirmationMessage');
+  const errorMessage = document.getElementById('errorMessage');
+  const citySelect = document.getElementById('citySelect');
+  confirmationMessage.style.display = 'none';
+  errorMessage.style.display = 'none';
+
+  console.log('📍 Försöker spara manuell plats:', { lat, lng });
+
+  if (isNaN(lat) || isNaN(lng)) {
+    console.warn('🚫 Ogiltiga koordinater: lat eller lng är inte numeriska');
+    alert('Ogiltiga koordinater! Ange giltiga värden för latitud och longitud.');
+    errorMessage.textContent = 'Ogiltiga koordinater. Ange numeriska värden.';
+    errorMessage.style.display = 'block';
     return;
   }
+
+  if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+    console.warn('🚫 Koordinater utanför tillåtet intervall:', { lat, lng });
+    alert('Ogiltiga koordinater! Latitud måste vara mellan -90 och 90, longitud mellan -180 och 180.');
+    errorMessage.textContent = 'Koordinater utanför tillåtet intervall.';
+    errorMessage.style.display = 'block';
+    return;
+  }
+
   chrome.storage.sync.set({ manualLocation: { lat, lng } }, () => {
     if (chrome.runtime.lastError) {
       console.error('❌ Fel vid sparande av manuell plats:', chrome.runtime.lastError.message);
+      errorMessage.textContent = 'Kunde inte spara plats. Försök igen.';
+      errorMessage.style.display = 'block';
     } else {
-      console.log('📍 Manuell plats sparad:', { lat, lng });
-    }
-    chrome.runtime.sendMessage({ type: 'updateLocation' }, (response) => {
-      if (chrome.runtime.lastError) {
-        console.error('❌ Fel vid skickande av updateLocation:', chrome.runtime.lastError.message);
-      } else {
-        console.log('✅ updateLocation skickat');
+      console.log('💾 Manuell plats sparad:', { lat, lng });
+      confirmationMessage.textContent = 'Manuell plats sparad! Ladda om sidan för att visa det nya avståndet.';
+      confirmationMessage.style.display = 'block';
+      // Update dropdown to reflect saved manual location
+      let selectedCity = '';
+      for (const [city, coords] of Object.entries(cities)) {
+        if (Math.abs(coords.lat - lat) < 0.0001 && Math.abs(coords.lng - lng) < 0.0001) {
+          selectedCity = `${coords.lat},${coords.lng}`;
+          console.log(`🏙️ Matchade stad vid spara: ${city} (${selectedCity})`);
+          break;
+        }
       }
-    });
-    updateCurrentLocation();
-    window.close();
+      console.log(`🏙️ Sätter dropdown till: ${selectedCity || 'ingen match'}`);
+      citySelect.value = selectedCity || '';
+      console.log(`✅ Dropdown-värde efter spara: ${citySelect.value}`);
+      updateCurrentLocation();
+      chrome.runtime.sendMessage({ type: 'updateLocation' }, (response) => {
+        if (chrome.runtime.lastError) {
+          console.error('❌ Fel vid skickande av updateLocation:', chrome.runtime.lastError.message);
+        } else {
+          console.log('✅ updateLocation skickat');
+        }
+      });
+      setTimeout(() => {
+        confirmationMessage.style.display = 'none';
+        window.close();
+      }, 2000);
+    }
   });
 }
 
-function retryGeolocation() {
-  chrome.runtime.sendMessage({ type: 'retryGeolocation' }, (response) => {
-    if (chrome.runtime.lastError) {
-      console.error('❌ Fel vid skickande av retryGeolocation:', chrome.runtime.lastError.message);
-    } else {
-      console.log('🔄 Försöker hämta plats igen');
-    }
-    updateCurrentLocation();
-    window.close();
+async function fetchGeolocation() {
+  const confirmationMessage = document.getElementById('confirmationMessage');
+  const errorMessage = document.getElementById('errorMessage');
+  confirmationMessage.style.display = 'none';
+  errorMessage.style.display = 'none';
+
+  // Clear manualLocation
+  await new Promise((resolve) => {
+    chrome.storage.sync.set({ manualLocation: null }, () => {
+      if (chrome.runtime.lastError) {
+        console.error('❌ Fel vid rensning av manuell plats:', chrome.runtime.lastError.message);
+        errorMessage.textContent = 'Kunde inte rensa manuell plats. Försök igen.';
+        errorMessage.style.display = 'block';
+        console.log('ℹ️ Felmeddelande satt till permanent visning, popupen förblir öppen');
+        resolve(false);
+      } else {
+        console.log('🗑️ Manuell plats rensad');
+        resolve(true);
+      }
+    });
   });
+
+  // Try geolocation
+  if (navigator.geolocation) {
+    try {
+      const position = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(
+          resolve,
+          reject,
+          {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 60000
+          }
+        );
+      });
+      console.log('📍 Geolocation lyckades i fetchGeolocation:', position.coords);
+      await updateCurrentLocation();
+      chrome.runtime.sendMessage({ type: 'fetchGeolocation' }, (response) => {
+        if (chrome.runtime.lastError) {
+          console.error('❌ Fel vid skickande av fetchGeolocation:', chrome.runtime.lastError.message);
+        } else {
+          console.log('✅ fetchGeolocation skickat');
+        }
+      });
+      confirmationMessage.textContent = 'Plats hämtad! Ladda om sidan för att visa det nya avståndet.';
+      confirmationMessage.style.display = 'block';
+      console.log('ℹ️ Bekräftelsemeddelande satt till permanent visning, popupen förblir öppen');
+    } catch (err) {
+      console.warn('🚫 Geolocation misslyckades i fetchGeolocation:', err.message);
+      errorMessage.textContent = 'Kunde inte hämta plats. Försök igen eller ange en manuell plats.';
+      errorMessage.style.display = 'block';
+      console.log('ℹ️ Felmeddelande satt till permanent visning, popupen förblir öppen');
+      await updateCurrentLocation();
+    }
+  } else {
+    console.warn('🚫 Geolocation stöds inte av webbläsaren');
+    errorMessage.textContent = 'Geolocation stöds inte. Ange en manuell plats.';
+    errorMessage.style.display = 'block';
+    console.log('ℹ️ Felmeddelande satt till permanent visning, popupen förblir öppen');
+    await updateCurrentLocation();
+  }
 }

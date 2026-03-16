@@ -1,3 +1,15 @@
+// Clean up any previous instance (after extension reload + re-injection)
+if (window.__auctionetObserver) {
+  window.__auctionetObserver.disconnect();
+  window.__auctionetObserver = null;
+}
+if (window.__turboLoadHandler) {
+  document.removeEventListener('turbo:load', window.__turboLoadHandler);
+  window.__turboLoadHandler = null;
+}
+const oldBar = document.getElementById('auctionet-quick-settings');
+if (oldBar) oldBar.remove();
+
 let userLocation = null;
 
 const defaultRanges = {
@@ -90,17 +102,6 @@ window.startProcessingItems = async function() {
   const items = document.querySelectorAll("article.item-thumb");
   console.log(`🧩 Hittade ${items.length} objekt`);
 
-  const styleSheet = Array.from(document.styleSheets).find(sheet =>
-    sheet.href && sheet.href.includes('styles.css')
-  );
-  if (!styleSheet) {
-    console.warn("⚠️ styles.css hittades inte i document.styleSheets");
-  } else {
-    console.log("✅ styles.css laddad korrekt");
-    const rules = Array.from(styleSheet.cssRules).map(rule => rule.selectorText);
-    console.log("📜 CSS-regler:", rules);
-  }
-
   if (items.length === 0) {
     console.warn("⚠️ Inga objekt hittades på sidan");
     return;
@@ -184,6 +185,53 @@ window.startProcessingItems = async function() {
   });
 };
 
+function applyQuickSettings(settings) {
+  document.body.classList.toggle('auctionet-hide-distances', !settings.showDistances);
+  document.body.classList.toggle('auctionet-hide-amounts', !settings.showAmounts);
+}
+
+function injectQuickSettings(settings) {
+  if (document.getElementById('auctionet-quick-settings')) return;
+
+  // Strategy 1: Auctionet's sort+pagination wrapper (exact class from real DOM)
+  // Insert BEFORE this div, not inside it (inside has hide-in-apps class)
+  const sortBar = document.querySelector('.search-page__sort-and-pagination');
+
+  // Strategy 2: parent of item cards (reliable when items exist)
+  const firstItem = document.querySelector('article.item-thumb');
+  const itemsContainer = firstItem ? firstItem.parentElement : null;
+
+  const injectionTarget = sortBar ?? itemsContainer;
+
+  // Nothing found yet — MutationObserver will retry when items load
+  if (!injectionTarget) return;
+
+  const bar = document.createElement('div');
+  bar.id = 'auctionet-quick-settings';
+  bar.innerHTML = `
+    <label class="auctionet-toggle-label">
+      <input type="checkbox" id="toggle-distances" ${settings.showDistances ? 'checked' : ''}>
+      Visa avstånd
+    </label>
+    <label class="auctionet-toggle-label">
+      <input type="checkbox" id="toggle-amounts" ${settings.showAmounts ? 'checked' : ''}>
+      Visa bud
+    </label>
+  `;
+
+  injectionTarget.insertAdjacentElement('beforebegin', bar);
+
+  document.getElementById('toggle-distances').addEventListener('change', (e) => {
+    document.body.classList.toggle('auctionet-hide-distances', !e.target.checked);
+    chrome.storage.sync.set({ showDistances: e.target.checked });
+  });
+
+  document.getElementById('toggle-amounts').addEventListener('change', (e) => {
+    document.body.classList.toggle('auctionet-hide-amounts', !e.target.checked);
+    chrome.storage.sync.set({ showAmounts: e.target.checked });
+  });
+}
+
 function observeDOMChanges() {
   const targetNode = document.body;
   const observer = new MutationObserver((mutations) => {
@@ -200,6 +248,7 @@ function observeDOMChanges() {
     });
     if (itemsAdded) {
       window.startProcessingItems();
+      chrome.storage.sync.get({ showDistances: true, showAmounts: true }, injectQuickSettings);
     }
   });
 
@@ -207,7 +256,26 @@ function observeDOMChanges() {
     childList: true,
     subtree: true
   });
+  window.__auctionetObserver = observer;
   console.log('👀 MutationObserver startad för att övervaka DOM-förändringar');
+}
+
+function setupPage() {
+  const oldBar = document.getElementById('auctionet-quick-settings');
+  if (oldBar) oldBar.remove();
+
+  chrome.storage.sync.get({ showDistances: true, showAmounts: true }, (settings) => {
+    applyQuickSettings(settings);
+    injectQuickSettings(settings);
+  });
+
+  if (window.__auctionetObserver) {
+    window.__auctionetObserver.disconnect();
+    window.__auctionetObserver = null;
+  }
+  observeDOMChanges();
+
+  window.startProcessingItems();
 }
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -221,9 +289,21 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 async function init() {
+  window.__turboLoadHandler = function() {
+    console.log('🚗 turbo:load fired — running setupPage()');
+    setupPage();
+  };
+  document.addEventListener('turbo:load', window.__turboLoadHandler);
+
+  // Direct call handles initial load (in case turbo:load already fired before injection)
+  setupPage();
+
+  // Resolve location async; re-process once available
   await window.getUserLocation();
-  window.startProcessingItems();
-  observeDOMChanges();
+  if (userLocation) {
+    document.querySelectorAll('.distance-info').forEach(el => el.remove());
+    window.startProcessingItems();
+  }
 }
 
 init();

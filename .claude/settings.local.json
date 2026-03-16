@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mcp-chrome-bridge doctor:*)"
+    ]
+  }
+}

@@ -10,11 +10,26 @@ async function loadAuctionHouseData() {
   }
 }
 
-loadAuctionHouseData();
+const auctionHouseDataReady = loadAuctionHouseData();
+
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.tabs.query({ url: "https://auctionet.com/*" }, (tabs) => {
+    for (const tab of tabs) {
+      chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        files: ["content.js"]
+      });
+      chrome.scripting.insertCSS({
+        target: { tabId: tab.id },
+        files: ["styles.css"]
+      });
+    }
+  });
+});
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "fetchItemPage") {
-    handleFetchItemPage(message, sendResponse);
+    auctionHouseDataReady.then(() => handleFetchItemPage(message, sendResponse));
     return true;
   } else if (message.type === "updateRanges") {
     chrome.tabs.query({ url: "https://auctionet.com/*" }, (tabs) => {

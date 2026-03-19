@@ -33,16 +33,16 @@ async function updateCurrentLocation() {
         const lng = result.manualLocation.lng;
         currentLocation.textContent = `Latitud: ${lat.toFixed(4)}, Longitud: ${lng.toFixed(4)} (manuell)`;
         // Update dropdown to reflect manual location
-        let selectedCity = '';
-        for (const [city, coords] of Object.entries(cities)) {
-          if (Math.abs(coords.lat - lat) < 0.0001 && Math.abs(coords.lng - lng) < 0.0001) {
-            selectedCity = `${coords.lat},${coords.lng}`;
-            console.log(`🏙️ Matchade stad: ${city} (${selectedCity})`);
+        citySelect.value = '';
+        for (const opt of citySelect.options) {
+          if (!opt.value) continue;
+          const [oLat, oLng] = opt.value.split(',').map(Number);
+          if (Math.abs(oLat - lat) < 0.0001 && Math.abs(oLng - lng) < 0.0001) {
+            citySelect.value = opt.value;
+            console.log(`🏙️ Matchade stad: ${opt.text} (${opt.value})`);
             break;
           }
         }
-        console.log(`🏙️ Sätter dropdown till: ${selectedCity || 'ingen match'}`);
-        citySelect.value = selectedCity || '';
         console.log(`✅ Dropdown-värde efter updateCurrentLocation: ${citySelect.value}`);
         resolve(result.manualLocation);
       } else if (navigator.geolocation) {
@@ -99,16 +99,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Set dropdown to matching city if manual location matches
     const citySelect = document.getElementById('citySelect');
-    let selectedCity = '';
-    for (const [city, coords] of Object.entries(cities)) {
-      if (manualLocation.lat && Math.abs(coords.lat - manualLocation.lat) < 0.0001 && Math.abs(coords.lng - manualLocation.lng) < 0.0001) {
-        selectedCity = `${coords.lat},${coords.lng}`;
-        console.log(`🔄 Hittade matchande stad för manuell plats: ${city} (${selectedCity})`);
-        break;
+    citySelect.value = '';
+    if (manualLocation.lat) {
+      for (const opt of citySelect.options) {
+        if (!opt.value) continue;
+        const [oLat, oLng] = opt.value.split(',').map(Number);
+        if (Math.abs(oLat - manualLocation.lat) < 0.0001 && Math.abs(oLng - manualLocation.lng) < 0.0001) {
+          citySelect.value = opt.value;
+          console.log(`🔄 Hittade matchande stad för manuell plats: ${opt.text} (${opt.value})`);
+          break;
+        }
       }
     }
-    console.log(`📄 Popup laddad, försöker sätta dropdown till: ${selectedCity || 'Välj en stad...'}`);
-    citySelect.value = selectedCity || '';
+    console.log(`📄 Popup laddad, dropdown-värde: ${citySelect.value || 'Välj en stad...'}`);
     console.log(`✅ Dropdown-värde vid laddning: ${citySelect.value}`);
     // Verify available options
     const options = Array.from(citySelect.options).map(opt => ({ value: opt.value, text: opt.text }));
@@ -131,6 +134,7 @@ function selectCity() {
     document.getElementById('manualLat').value = lat;
     document.getElementById('manualLng').value = lng;
     console.log('🏙️ Stad vald:', { lat, lng });
+    saveManualLocation();
   } else {
     document.getElementById('manualLat').value = '';
     document.getElementById('manualLng').value = '';
@@ -247,16 +251,16 @@ function saveManualLocation() {
       confirmationMessage.textContent = 'Manuell plats sparad! Ladda om sidan för att visa det nya avståndet.';
       confirmationMessage.style.display = 'block';
       // Update dropdown to reflect saved manual location
-      let selectedCity = '';
-      for (const [city, coords] of Object.entries(cities)) {
-        if (Math.abs(coords.lat - lat) < 0.0001 && Math.abs(coords.lng - lng) < 0.0001) {
-          selectedCity = `${coords.lat},${coords.lng}`;
-          console.log(`🏙️ Matchade stad vid spara: ${city} (${selectedCity})`);
+      citySelect.value = '';
+      for (const opt of citySelect.options) {
+        if (!opt.value) continue;
+        const [oLat, oLng] = opt.value.split(',').map(Number);
+        if (Math.abs(oLat - lat) < 0.0001 && Math.abs(oLng - lng) < 0.0001) {
+          citySelect.value = opt.value;
+          console.log(`🏙️ Matchade stad vid spara: ${opt.text} (${opt.value})`);
           break;
         }
       }
-      console.log(`🏙️ Sätter dropdown till: ${selectedCity || 'ingen match'}`);
-      citySelect.value = selectedCity || '';
       console.log(`✅ Dropdown-värde efter spara: ${citySelect.value}`);
       updateCurrentLocation();
       chrome.runtime.sendMessage({ type: 'updateLocation' }, (response) => {

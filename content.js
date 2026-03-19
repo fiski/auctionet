@@ -188,6 +188,7 @@ window.startProcessingItems = async function() {
 function applyQuickSettings(settings) {
   document.body.classList.toggle('auctionet-hide-distances', !settings.showDistances);
   document.body.classList.toggle('auctionet-hide-amounts', !settings.showAmounts);
+  document.body.classList.toggle('auctionet-hide-red-items', !!settings.hideRedItems);
 }
 
 function injectQuickSettings(settings) {
@@ -217,6 +218,10 @@ function injectQuickSettings(settings) {
       <input type="checkbox" id="toggle-amounts" ${settings.showAmounts ? 'checked' : ''}>
       Visa bud
     </label>
+    <label class="auctionet-toggle-label">
+      <input type="checkbox" id="toggle-hide-red" ${settings.hideRedItems ? 'checked' : ''}>
+      Dölj röda avstånd
+    </label>
   `;
 
   injectionTarget.insertAdjacentElement('beforebegin', bar);
@@ -229,6 +234,11 @@ function injectQuickSettings(settings) {
   document.getElementById('toggle-amounts').addEventListener('change', (e) => {
     document.body.classList.toggle('auctionet-hide-amounts', !e.target.checked);
     chrome.storage.sync.set({ showAmounts: e.target.checked });
+  });
+
+  document.getElementById('toggle-hide-red').addEventListener('change', (e) => {
+    document.body.classList.toggle('auctionet-hide-red-items', e.target.checked);
+    chrome.storage.sync.set({ hideRedItems: e.target.checked });
   });
 }
 
@@ -248,7 +258,7 @@ function observeDOMChanges() {
     });
     if (itemsAdded) {
       window.startProcessingItems();
-      chrome.storage.sync.get({ showDistances: true, showAmounts: true }, injectQuickSettings);
+      chrome.storage.sync.get({ showDistances: true, showAmounts: true, hideRedItems: false }, injectQuickSettings);
     }
   });
 
@@ -264,7 +274,7 @@ function setupPage() {
   const oldBar = document.getElementById('auctionet-quick-settings');
   if (oldBar) oldBar.remove();
 
-  chrome.storage.sync.get({ showDistances: true, showAmounts: true }, (settings) => {
+  chrome.storage.sync.get({ showDistances: true, showAmounts: true, hideRedItems: false }, (settings) => {
     applyQuickSettings(settings);
     injectQuickSettings(settings);
   });

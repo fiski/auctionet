@@ -51,6 +51,11 @@
   display: none !important;
 }
 
+/* Quick setting: hide red (far away) items */
+.auctionet-hide-red-items article.item-thumb:has(.distance-info.red) {
+  display: none !important;
+}
+
 #auctionet-quick-settings {
   display: flex;
   align-items: center;
